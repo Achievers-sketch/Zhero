@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 import app.models  # noqa: F401
+from app.core.config import Settings, get_settings
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import create_app
@@ -36,7 +37,7 @@ def db_engine():
 
 
 @pytest.fixture
-def client(db_engine) -> Iterator[TestClient]:
+def client(db_engine, tmp_path) -> Iterator[TestClient]:
     factory = sessionmaker(bind=db_engine, expire_on_commit=False)
 
     def override_get_db() -> Iterator[Session]:
@@ -45,4 +46,7 @@ def client(db_engine) -> Iterator[TestClient]:
 
     app = create_app()
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_settings] = lambda: Settings(
+        _env_file=None, upload_dir=str(tmp_path / "uploads")
+    )
     yield TestClient(app)
