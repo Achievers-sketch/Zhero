@@ -9,8 +9,9 @@ not replace qualified biomedical engineering judgement.
 
 ## Status
 
-Phase 0 (setup): backend skeleton with a health endpoint. Equipment, simulator, RAG,
-verification and dashboard are not built yet. See the build blueprint for the roadmap.
+Phase 1 (foundation) in progress: health endpoint, PostgreSQL schema with Alembic
+migrations, and the equipment API (create, list, detail, update metadata). The simulator,
+RAG, verification and dashboard are not built yet.
 
 ## Repository layout
 
@@ -32,9 +33,20 @@ cd backend
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements-dev.txt
-cp ../.env.example ../.env         # optional; defaults work for the health endpoint
+cd .. && docker compose up -d db && cd backend   # local PostgreSQL (pgvector image)
+cp ../.env.example .env            # DATABASE_URL must match docker-compose.yml, see below
+alembic upgrade head               # create tables
 uvicorn app.main:app --reload
 ```
+
+The compose database uses user/password/db `zhero` / `zhero_local_password` / `zhero`, so set:
+
+```
+DATABASE_URL=postgresql+psycopg://zhero:zhero_local_password@localhost:5432/zhero
+```
+
+Without `DATABASE_URL`, the health endpoint reports `database: not_configured` and
+database-backed endpoints return `503 database_unavailable`.
 
 - Health check: <http://127.0.0.1:8000/api/v1/health>
 - OpenAPI docs (development only): <http://127.0.0.1:8000/docs>
@@ -43,7 +55,8 @@ uvicorn app.main:app --reload
 
 ```bash
 cd backend
-pytest
+pytest                                   # in-memory SQLite
+TEST_DATABASE_URL=postgresql+psycopg://zhero:zhero_local_password@localhost:5432/zhero pytest   # real Postgres (drops/creates tables: use a scratch DB)
 ruff check . && ruff format --check .
 ```
 
@@ -53,6 +66,7 @@ CI (`.github/workflows/ci.yml`) runs the same checks on pull requests and pushes
 ## Conventions
 
 - Secrets live in environment variables; only `.env.example` is committed.
+- Equipment API: `POST/GET /api/v1/equipment`, `GET/PATCH /api/v1/equipment/{id}` (see `/docs`).
 - API errors use `{"error": {"code", "message", "request_id"}}`.
 - Branch per issue (`feature/...`), pull request into `develop`.
 - Consequential technology choices are recorded in `docs/decisions/`.

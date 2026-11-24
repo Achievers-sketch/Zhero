@@ -9,9 +9,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app.api.routes import health
+from app.api.routes import equipment, health
 from app.core.config import get_settings
+from app.core.errors import AppError
 from app.core.logging import configure_logging
+from app.db.session import DatabaseNotConfiguredError
 from app.schemas.common import ErrorBody, ErrorResponse
 
 logger = logging.getLogger("zhero.api")
@@ -55,6 +57,16 @@ def create_app() -> FastAPI:
         response.headers["X-Request-ID"] = request.state.request_id
         return response
 
+    @app.exception_handler(AppError)
+    async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
+        return _error(request, exc.status_code, exc.code, exc.message)
+
+    @app.exception_handler(DatabaseNotConfiguredError)
+    async def db_not_configured_handler(
+        request: Request, exc: DatabaseNotConfiguredError
+    ) -> JSONResponse:
+        return _error(request, 503, "database_unavailable", "Database is not configured.")
+
     @app.exception_handler(StarletteHTTPException)
     async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
         code = "not_found" if exc.status_code == 404 else "http_error"
@@ -73,6 +85,7 @@ def create_app() -> FastAPI:
         return _error(request, 500, "internal_error", "An unexpected error occurred.")
 
     app.include_router(health.router, prefix=API_PREFIX)
+    app.include_router(equipment.router, prefix=API_PREFIX)
     return app
 
 

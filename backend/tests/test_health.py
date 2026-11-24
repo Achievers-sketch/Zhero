@@ -20,6 +20,29 @@ def test_health_returns_ok() -> None:
     assert body["database"] == "not_configured"
 
 
+def test_health_reports_database_ok_when_configured(
+    client: TestClient, db_engine, monkeypatch
+) -> None:
+    from app.api.routes import health as health_module
+    from app.core.config import Settings, get_settings
+
+    monkeypatch.setattr(health_module, "get_engine", lambda: db_engine)
+    client.app.dependency_overrides[get_settings] = lambda: Settings(database_url="configured")
+    assert client.get("/api/v1/health").json()["database"] == "ok"
+
+
+def test_health_reports_database_unavailable_on_failure(client: TestClient, monkeypatch) -> None:
+    from app.api.routes import health as health_module
+    from app.core.config import Settings, get_settings
+
+    def boom():
+        raise RuntimeError("down")
+
+    monkeypatch.setattr(health_module, "get_engine", boom)
+    client.app.dependency_overrides[get_settings] = lambda: Settings(database_url="configured")
+    assert client.get("/api/v1/health").json()["database"] == "unavailable"
+
+
 def test_request_id_is_generated() -> None:
     response = make_client().get("/api/v1/health")
     assert response.headers["X-Request-ID"]
