@@ -14,3 +14,7 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# Alembic-generated files keep the tool's own typing style.
+"migrations/versions/*" = ["UP006", "UP007", "UP035", "UP045"]
