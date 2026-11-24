@@ -7,7 +7,7 @@ full list of supported variables.
 
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -28,6 +28,19 @@ class Settings(BaseSettings):
 
     # Not used until the database milestone (Sprint 1, day 4).
     database_url: str | None = None
+
+    # Documents and RAG (blueprint Appendix A). Files are stored outside any web root.
+    upload_dir: str = "./storage/uploads"
+    max_upload_mb: int = Field(default=25, ge=1, le=200)
+    rag_chunk_size: int = Field(default=900, ge=200)
+    rag_chunk_overlap: int = Field(default=120, ge=0)
+    rag_top_k: int = Field(default=5, ge=1, le=20)
+
+    @model_validator(mode="after")
+    def _overlap_smaller_than_chunk(self) -> "Settings":
+        if self.rag_chunk_overlap >= self.rag_chunk_size:
+            raise ValueError("RAG_CHUNK_OVERLAP must be smaller than RAG_CHUNK_SIZE")
+        return self
 
     @property
     def is_development(self) -> bool:

@@ -7,7 +7,12 @@ from app.main import create_app
 
 
 def make_client(**kwargs: bool) -> TestClient:
-    return TestClient(create_app(), **kwargs)
+    from app.core.config import Settings, get_settings
+
+    app = create_app()
+    # Ignore any developer .env so results do not depend on local configuration.
+    app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None)
+    return TestClient(app, **kwargs)
 
 
 def test_health_returns_ok() -> None:

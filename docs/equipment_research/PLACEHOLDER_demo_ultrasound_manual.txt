@@ -1,0 +1,90 @@
+SYNTHETIC PLACEHOLDER DOCUMENT - NOT A REAL MANUAL
+
+This file was written for software testing and demonstration of the Zhero document
+pipeline. It describes a FICTIONAL product, the "ZH-DEMO Ultrasound Unit". It is not
+published by any manufacturer, is not based on any real service manual, and must never
+be used for real maintenance decisions. Replace it with a legitimately obtained manual
+(record title, publisher, revision and source) before any real-world use.
+
+1 INTRODUCTION
+
+This placeholder describes a fictional ultrasound unit with four subsystems: power,
+cooling, probe, and display and control. It exists so that retrieval, citation and
+verification features can be tested against known text.
+
+1.1 Intended audience
+
+The user-level sections are written for operators. Sections marked SERVICE LEVEL are
+written for qualified biomedical engineering staff only.
+
+2 DAILY OPERATION
+
+2.1 Power-on check
+
+1. Connect the unit to a suitable mains supply.
+2. Switch on the unit and wait for the start-up screen.
+3. Confirm that no error banner is shown before scanning begins.
+
+WARNING: Do not use the unit if the power cable or plug is visibly damaged. Report the
+damage to qualified service staff.
+
+2.2 Cooling and ventilation
+
+The fictional ZH-DEMO unit uses an internal cooling fan. In normal operation the fan runs
+at a steady speed and the internal temperature stays within the demonstration range.
+Keep the ventilation openings at the rear and sides of the unit clear of obstructions.
+
+If a fan speed warning or high temperature warning is displayed, stop scanning, allow the
+unit to rest, check that the ventilation openings are not blocked, and contact qualified
+service staff if the warning persists.
+
+CAUTION: Never operate the unit with the cooling openings covered.
+
+2.3 Probe handling
+
+Inspect the probe cable and connector before each use. Do not use a probe with a cracked
+housing or a damaged cable. Clean the probe according to your facility's approved
+procedure after each patient.
+
+3 TROUBLESHOOTING FOR OPERATORS
+
+3.1 Fan speed warning
+
+A fan speed warning means the cooling fan is running slower than expected. Possible
+documented causes in this fictional manual are blocked ventilation openings, dust
+build-up, or a failing fan. Operators may check the openings; any internal inspection is
+SERVICE LEVEL and must be performed only by qualified staff.
+
+3.2 Unstable power indication
+
+An unstable power indication means the supply voltage is fluctuating. Check that the
+plug is fully inserted and that the unit is not sharing a circuit with heavy equipment.
+Do not open the unit. Contact qualified service staff if the indication continues.
+
+3.3 Probe not detected
+
+If the probe is not detected, power the unit down, reseat the probe connector, and power
+the unit on again. If the probe is still not detected, try a different probe port and
+contact qualified service staff.
+
+4 SERVICE LEVEL INFORMATION
+
+WARNING: This section is for qualified biomedical engineering staff only. Disconnect the
+unit from the mains supply before any internal work.
+
+4.1 Cooling subsystem inspection
+
+Qualified staff should inspect the fan, the air path and the temperature sensor. Part
+number FAN-2040-X is the fictional replacement fan for the ZH-DEMO unit. Record the fan
+speed and internal temperature before and after any maintenance.
+
+4.2 Power subsystem inspection
+
+Qualified staff should measure the input supply and inspect the power connector and
+internal power module. Part number PSU-310-A is the fictional replacement power module.
+
+4.3 Preventive maintenance schedule
+
+The fictional schedule is: clean ventilation openings monthly, inspect cables quarterly,
+and perform a documented performance check annually. Follow your facility's own policy
+where it differs.

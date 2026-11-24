@@ -11,8 +11,9 @@ not replace qualified biomedical engineering judgement.
 
 Phase 1-2 (foundation and digital twin) in progress: health endpoint, PostgreSQL schema
 with Alembic migrations, the equipment API, and a deterministic simulator with fault
-scenarios, reset, readings and event history. RAG, verification and the dashboard are not
-built yet.
+scenarios, reset, readings and event history. Phase 3 (RAG) has started: document upload,
+PDF/TXT ingestion with page-level chunks, and a BM25 retrieval baseline. Embeddings, the LLM
+answer step, verification and the dashboard are not built yet.
 
 ## Repository layout
 
@@ -45,6 +46,10 @@ The compose database uses user/password/db `zhero` / `zhero_local_password` / `z
 DATABASE_URL=postgresql+psycopg://zhero:zhero_local_password@localhost:5432/zhero
 ```
 
+No Docker? For local development you can use SQLite instead:
+`DATABASE_URL=sqlite:///./zhero_dev.db` (then `alembic upgrade head`). Use PostgreSQL when you
+need to match the final setup.
+
 Without `DATABASE_URL`, the health endpoint reports `database: not_configured` and
 database-backed endpoints return `503 database_unavailable`.
 
@@ -70,6 +75,13 @@ CI (`.github/workflows/ci.yml`) runs the same checks on pull requests and pushes
 - Digital twin API (all data is SIMULATED): `POST /equipment/{id}/simulate`, `/faults`, `/reset`,
   `GET /equipment/{id}/readings`, `/events`. Scenarios: `cooling_degradation`,
   `power_instability`, `component_fault`. Pass `seed` to `simulate` for reproducible values.
+- Documents API: `POST /documents` (multipart PDF/TXT upload, max `MAX_UPLOAD_MB`),
+  `POST /documents/{id}/ingest` (idempotent), `GET /documents`, `GET /documents/{id}`,
+  `GET /documents/{id}/chunks`; `POST /search` returns ranked passages with document, page,
+  section and score. Original files are stored under `UPLOAD_DIR` (git-ignored) with generated
+  names; uploaded text is treated as untrusted data.
+- `docs/equipment_research/PLACEHOLDER_demo_ultrasound_manual.txt` is a SYNTHETIC document for
+  testing and demos. It is not a real manual; replace it with a permitted source before real use.
 - Simulator thresholds are illustrative assumptions in `backend/app/digital_twin/config.py`,
   not manufacturer limits.
 - API errors use `{"error": {"code", "message", "request_id"}}`.
