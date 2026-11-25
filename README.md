@@ -12,8 +12,10 @@ not replace qualified biomedical engineering judgement.
 Phase 1-2 (foundation and digital twin) in progress: health endpoint, PostgreSQL schema
 with Alembic migrations, the equipment API, and a deterministic simulator with fault
 scenarios, reset, readings and event history. Phase 3 (RAG) has started: document upload,
-PDF/TXT ingestion with page-level chunks, and a BM25 retrieval baseline. Embeddings, the LLM
-answer step, verification and the dashboard are not built yet.
+PDF/TXT ingestion with page-level chunks, a BM25 retrieval baseline, and grounded chat answers
+(`POST /chat`) using a deterministic mock generator behind an LLM adapter. Answers are
+UNVERIFIED: the verification engine, embeddings, a real LLM provider and the dashboard are not
+built yet.
 
 ## Repository layout
 
@@ -80,6 +82,11 @@ CI (`.github/workflows/ci.yml`) runs the same checks on pull requests and pushes
   `GET /documents/{id}/chunks`; `POST /search` returns ranked passages with document, page,
   section and score. Original files are stored under `UPLOAD_DIR` (git-ignored) with generated
   names; uploaded text is treated as untrusted data.
+- Chat API: `POST /chat {question, equipment_id?}` retrieves evidence, screens for hazardous
+  requests, generates via the adapter selected by `LLM_PROVIDER` (default `mock`, no key needed),
+  and returns claims, server-built citations, SIMULATED twin observations and caveats.
+  `GET /chat/{chat_id}` re-reads a stored answer. Statuses: `UNVERIFIED`,
+  `INSUFFICIENT_INFORMATION`, `BLOCKED_FOR_SAFETY` (never `VERIFIED` yet).
 - `docs/equipment_research/PLACEHOLDER_demo_ultrasound_manual.txt` is a SYNTHETIC document for
   testing and demos. It is not a real manual; replace it with a permitted source before real use.
 - Simulator thresholds are illustrative assumptions in `backend/app/digital_twin/config.py`,
