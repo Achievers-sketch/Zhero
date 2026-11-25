@@ -36,6 +36,11 @@ class Settings(BaseSettings):
     rag_chunk_overlap: int = Field(default=120, ge=0)
     rag_top_k: int = Field(default=5, ge=1, le=20)
 
+    # LLM provider (kept behind an adapter). "mock" needs no key and never calls a network.
+    llm_provider: str = "mock"
+    llm_model: str | None = None
+    llm_api_key: str | None = None
+
     @model_validator(mode="after")
     def _overlap_smaller_than_chunk(self) -> "Settings":
         if self.rag_chunk_overlap >= self.rag_chunk_size:
